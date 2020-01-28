@@ -1,0 +1,43 @@
+= NLP APP 
+
+== Motiviation 
+An app to explore NLP functionality 
+
+== Pre requisition 
+
+Clone health ontologies: https://github.com/bjornna/healthontologies at the same level as this project. 
+
+
+== Installation 
+
+
+[source]
+----
+pip install -r requirements.txt
+----
+
+----
+pip install -U spacy
+pip install -U spacy-lookups-data
+python -m spacy download nb_core_news_sm
+----
+
+----
+pip install xlrd
+----
+
+
+[source]
+----
+hug 2.6.0
+hug-middleware-cors=1.0.0
+waitress=1.4.2
+----
+
+
+== RUN 
+
+[source]
+----
+hug -f .\app.py
+----
