@@ -48,7 +48,8 @@ def dep(item: Query):
     collapse_phrases = False
     options = {
         "collapse_punct": collapse_punctuation,
-        "collapse_phrases": collapse_phrases,
+        "collapse_phrases": collapse_phrases
+
     }
     return spacy.displacy.parse_deps(doc, options)
 

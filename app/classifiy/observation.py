@@ -1,4 +1,6 @@
 from tabulate import tabulate
+import spacy
+from spacy.tokens import Token
 
 
 class Observation:
