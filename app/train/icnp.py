@@ -3,9 +3,15 @@ from spacy.pipeline import EntityRuler
 import xlrd
 PATH_HEALTHONTOLOGIES = "../healthontologies"
 PATH_ICNP = "icnp/icnp_no_out.xlsx"
+ALL_ICNP_AXIS = ["F", "IC", "DC", "M", "L", "A", "T", "J", "C", "OC"]
 
 
-def load_icnp(axis_filter="F", debug=False):
+def load_icnp(axis_filter=["F", "IC", "DC", "M", "A", "T", "J", "C", "OC"], debug=False):
+    """Loading ICNP terms from the given file. Exluded axis: 
+
+    * L - Location which is taken care of by SNOMED Anatomy
+
+    """
     excel_file = PATH_HEALTHONTOLOGIES + "/" + PATH_ICNP
     loc = (excel_file)
     wb = xlrd.open_workbook(loc, encoding_override="utf-8")
@@ -42,22 +48,16 @@ def create_pattern(terms):
     return patterns
 
 
-def create_nlp_pattern(nlp, patterns):
-    ruler = EntityRuler(nlp, patterns=patterns, overwrite_ents=True)
-    return ruler
-
-
 def load_patterns():
-    terms = load_icnp(axis_filter="F", debug=False)
+    terms = load_icnp()
     # print(terms)
     patterns = create_pattern(terms)
     return patterns
 
 
 if __name__ == "__main__":
-    terms = load_icnp(axis_filter="F", debug=False)
-    # print(terms)
-    patterns = create_pattern(terms)
-    nlp = spacy.load('nb_core_news_sm')
-    ruler = create_nlp_pattern(nlp, patterns)
-    ruler.to_disk("icnp_f.jsonl")
+    print("ICNP testing")
+
+    #terms = load_icnp(axis_filter=ALL_ICNP_AXIS, debug=True)
+    terms = load_icnp()
+    print(f"Number of terms: {len(terms)}")

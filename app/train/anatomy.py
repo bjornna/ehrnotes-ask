@@ -1,5 +1,6 @@
 import xlrd
-import snomed.tool
+
+
 PATH_HEALTHONTOLOGIES = "../healthontologies"
 PATH_SNOMED_EXCEL = "snomed/volven-8352-snomed.xlsx"
 
@@ -15,6 +16,18 @@ def enric_word(word: str) -> []:
         res.append(n + "nene")
 
     return res
+
+
+def extract_code(term: str) -> str:
+    if term is None:
+        return "NONE"
+    elif len(term) == 0:
+        return "NONE"
+    elif "|" in term:
+        arr = term.split("|")
+        return arr[0].strip()
+    else:
+        return term
 
 
 def load_anatomy(debug=False):
@@ -41,7 +54,7 @@ def load_anatomy(debug=False):
         term_name = sheet.cell_value(i, 3)
         term_code = sheet.cell_value(i, 5)
         term_name_str = f"{term_name}".lower()
-        code = snomed.tool.extract_code(term_code)
+        code = extract_code(term_code)
         term = (LABEL, term_name_str, code)
         terms.append(term)
 

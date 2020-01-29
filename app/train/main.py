@@ -1,10 +1,8 @@
 import numpy as np
-from snomed import tool
+
 import spacy
 from spacy.pipeline import EntityRuler
-import anatomy
-import icnp
-import medication
+from app.train import anatomy, icnp, medication, icd10
 
 
 def load_anatomy_patterns(nlp, debug=False) -> EntityRuler:
@@ -16,13 +14,16 @@ def load_anatomy_patterns(nlp, debug=False) -> EntityRuler:
     return ruler
 
 
-def load_ruler_from_file(nlp,  file="anatomy.jsonl") -> EntityRuler:
+def load_ruler_from_file(nlp, file="combined.jsonl") -> EntityRuler:
+    print(f"Loading EntityRuler with patterns from file={file}")
 
     ruler = EntityRuler(nlp, overwrite_ents=True).from_disk(file)
     return ruler
 
 
 def load_spacy(model="nb_core_news_sm", file="combined.jsonl"):
+    """Loading a SPACY nlp model and load patterns from the given file (default= combined.jsonl)"""
+    print(f"Loading SPACY with model={model} from file={file}")
     nlp = spacy.load(model)
     ruler = load_ruler_from_file(nlp, file)
     patterns = [
@@ -48,15 +49,31 @@ def load_spacy(model="nb_core_news_sm", file="combined.jsonl"):
         {"label": "UNIT", "pattern": "mmHg", "id": "MMHG"}
 
     ]
-
+    print(f"Loading custom patterns of size={len(patterns)}")
     ruler.add_patterns(patterns)
 
     nlp.add_pipe(ruler)
+    print("Finished loading SPACY")
     return nlp
+
+
+def load_all_patterns(file="combined.jsonl"):
+    """Loading ANATOMY, ICNP, MEDICATION, ICD10 patterns into a combined pattern which is saved in file """
+
+    ana_patterns = anatomy.load_anatomy()
+    icnp_patterns = icnp.load_patterns()
+    medication_patterns = medication.create()
+    icd10_patterns = icd10.create()
+    patterns = np.concatenate(
+        (ana_patterns, icnp_patterns, medication_patterns, icd10_patterns))
+    ruler = EntityRuler(nlp, patterns=patterns, overwrite_ents=True)
+    ruler.to_disk(file)
 
 
 if __name__ == "__main__":
     print("Main")
+    timebudget.set_quiet()  # don't show measurements as they happen
+    timebudget.report_at_exit()  # Generate report when the program exits
     func = "ALL"
     nlp = spacy.load('nb_core_news_sm')
     if "WRITE" in func:
@@ -65,10 +82,4 @@ if __name__ == "__main__":
     elif "LOAD" in func:
         ruler = load_ruler_from_file(nlp)
     elif "ALL":
-        ana_patterns = anatomy.load_anatomy()
-        icnp_patterns = icnp.load_patterns()
-        medication_patterns = medication.create()
-        patterns = np.concatenate(
-            (ana_patterns, icnp_patterns, medication_patterns))
-        ruler = EntityRuler(nlp, patterns=patterns, overwrite_ents=True)
-        ruler.to_disk("combined.jsonl")
+        load_all_patterns()

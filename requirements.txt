@@ -1,7 +1,9 @@
   
-hug==2.4.8
-hug-middleware-cors>=1.0.0,<2.0.0
+
 spacy>=2.2.0,<2.3.0
 spacy-lookups-data
 waitress>=1.0.2,<2.0.0
 xlrd
+pysolr
+fastapi
+timebudget

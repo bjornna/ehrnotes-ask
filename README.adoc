@@ -39,5 +39,18 @@ waitress=1.4.2
 
 [source]
 ----
-hug -f .\app.py
+uvicorn app:app --reload
+----
+
+
+== DOCKER 
+
+[source]
+----
+docker build -t myimage .
+----
+
+[source]
+----
+docker run -d --name mycontainer -p 80:80 myimage
 ----
