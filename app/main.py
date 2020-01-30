@@ -4,7 +4,7 @@ from spacy.matcher import Matcher
 from app.train import main
 from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
-
+from IPython.core.display import display, HTML
 app = FastAPI()
 
 origins = [
@@ -52,6 +52,13 @@ def dep(item: Query):
 
     }
     return spacy.displacy.parse_deps(doc, options)
+
+
+@app.post("/entview")
+def dep_view(item: Query):
+    doc = nlp(item.corpus)
+    html = spacy.displacy.render(doc, style="ent")
+    return HTML(html)
 
 
 @app.post("/ent")
