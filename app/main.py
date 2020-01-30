@@ -6,10 +6,11 @@ from pydantic import BaseModel
 from starlette.middleware.cors import CORSMiddleware
 from IPython.core.display import display, HTML
 app = FastAPI()
+# "http://localhost",
+# "http://localhost:8080"
 
 origins = [
-    "http://localhost",
-    "http://localhost:8080",
+    '*'
 ]
 
 app.add_middleware(
