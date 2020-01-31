@@ -7,3 +7,5 @@ xlrd
 pysolr
 fastapi
 timebudget
+fuzzywuzzy[speedup]
+pyspellchecker

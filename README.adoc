@@ -47,10 +47,10 @@ uvicorn app:app --reload
 
 [source]
 ----
-docker build -t myimage .
+docker build -t ehrnotes_ask .
 ----
 
 [source]
 ----
-docker run -d --name mycontainer -p 80:80 myimage
+docker run -d --name ehrnotes_ask_container -p 80:80 ehrnotes_ask
 ----
