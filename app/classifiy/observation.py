@@ -19,12 +19,13 @@ class Observation:
 
 class ObservationExtractor:
     table_format = "psql"  # plain, html, grid, github,
-    observations = []
-    current_observation: Observation = None
 
-    def __init__(self, doc):
+    def __init__(self, doc, debug=False):
         super().__init__()
         self.doc = doc
+        self.debug = debug
+        self.observations = []
+        self.current_observation: Observation = None
 
     def extract_observations(self):
         result = []
@@ -42,8 +43,12 @@ class ObservationExtractor:
         ent = n.ent_iob_
         ent_type = n.ent_type_
         ent_id = n.ent_id_
-        print(f"Handle token n.post={n.pos_}")
+        if self.debug:
+            print(f"Handle token n.post={n.pos_}")
         if "B" == ent and "OBSERVATION" == ent_type:
+            if self.debug:
+                print(
+                    f"NEW Observation detected - try add current and start filling the new one")
             self.add_current()
             self.current_observation = Observation(ent_id, ent_type)
         else:
@@ -54,6 +59,7 @@ class ObservationExtractor:
                     self.current_observation.unit = n.text
 
     def explore(self):
+        """Extract entities from corpus and return a tabular string"""
         result = [
             {"start": ent.start_char, "end": ent.end_char,
              "label": ent.label_, "id": ent.ent_id_, "text": ent.text}
@@ -63,7 +69,7 @@ class ObservationExtractor:
 
 
 if __name__ == "__main__":
-
+    from app.train import main
     nlp = main.load_spacy()
     doc = nlp("Temperatur: 45 C")
     extr = ObservationExtractor(doc)
